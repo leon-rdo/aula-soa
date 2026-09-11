@@ -61,5 +61,15 @@ rede de segurança, não gabarito escondido.
 
 ## Git quebrou de vez?
 
-Baixe o `.zip` do checkpoint pelo GitHub (botão **Code → Download ZIP** com a
-tag selecionada) e continue por lá. Perder a aula por causa do git não vale a pena.
+Baixe o `.zip` do checkpoint direto, sem precisar navegar no GitHub:
+
+| Checkpoint | Link direto |
+|---|---|
+| `cp0-inicio` | https://github.com/leon-rdo/aula-soa/releases/tag/cp0-inicio |
+| `cp1-consumo` | https://github.com/leon-rdo/aula-soa/releases/tag/cp1-consumo |
+| `cp2-api-base` | https://github.com/leon-rdo/aula-soa/releases/tag/cp2-api-base |
+| `cp3-api-rest` | https://github.com/leon-rdo/aula-soa/releases/tag/cp3-api-rest |
+| `cp-aula1-final` | https://github.com/leon-rdo/aula-soa/releases/tag/cp-aula1-final |
+
+Extraia, entre na pasta e siga o `README.md` normalmente a partir dali.
+Perder a aula por causa do git não vale a pena.
