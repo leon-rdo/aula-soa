@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo — consumindo a própria API</title>
+  <!-- favicon vazio: evita um 404 no console que distrai na aula -->
+  <link rel="icon" href="data:,">
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      max-width: 760px; margin: 0 auto; padding: 32px 20px;
+      font-size: 18px; line-height: 1.6;
+    }
+    h1 { font-size: 1.6rem; margin-bottom: 4px; }
+    .sub { opacity: .7; margin-top: 0; font-size: .95rem; }
+    button {
+      font: inherit; padding: 10px 18px; cursor: pointer;
+      border-radius: 8px; border: 1px solid currentColor; background: transparent;
+    }
+    ul { list-style: none; padding: 0; }
+    li {
+      border: 1px solid rgba(128,128,128,.35); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 10px;
+    }
+    .nome { font-weight: 600; }
+    .preco { font-variant-numeric: tabular-nums; }
+    .indisponivel { opacity: .45; text-decoration: line-through; }
+    .aviso { padding: 14px 16px; border-radius: 10px;
+             border: 1px solid rgba(200,80,80,.5); }
+  </style>
+</head>
+<body>
+  <h1>Catálogo de produtos</h1>
+  <p class="sub">
+    Esta página não tem banco de dados. Ela só sabe conversar com
+    <code>/api/produtos/</code>. Abra o DevTools (F12) na aba
+    <strong>Network</strong> e clique em recarregar.
+  </p>
+
+  <button id="recarregar">Recarregar do serviço</button>
+
+  <ul id="lista"></ul>
+
+  <script>
+    const lista = document.getElementById("lista");
+
+    function carregarProdutos() {
+      lista.innerHTML = "<li>carregando…</li>";
+
+      fetch("/api/produtos/")
+        .then(function (resposta) {
+          // fetch NÃO lança erro em 404 ou 500. Ele só rejeita se a
+          // rede falhar. Então o status precisa ser checado na mão.
+          if (!resposta.ok) {
+            throw new Error("o serviço respondeu " + resposta.status);
+          }
+          return resposta.json();
+        })
+        .then(function (dados) {
+          // ATENÇÃO ao formato: como a API é paginada, a resposta NÃO é
+          // uma lista. É um objeto { count, next, previous, results }.
+          // A lista de verdade está em dados.results.
+          // Isto é o contrato falando: o consumidor precisa conhecê-lo.
+          mostrar(dados.results);
+        })
+        .catch(function (erro) {
+          lista.innerHTML =
+            '<li class="aviso">Não consegui falar com o serviço: ' +
+            erro.message + "</li>";
+        });
+    }
+
+    function mostrar(produtos) {
+      if (produtos.length === 0) {
+        lista.innerHTML =
+          "<li>Nenhum produto ainda. Crie um pelo Thunder Client.</li>";
+        return;
+      }
+
+      lista.innerHTML = "";
+      produtos.forEach(function (produto) {
+        const item = document.createElement("li");
+        if (!produto.disponivel) item.classList.add("indisponivel");
+
+        const preco = Number(produto.preco).toLocaleString("pt-BR", {
+          style: "currency", currency: "BRL",
+        });
+
+        item.innerHTML =
+          '<div class="nome">' + produto.nome + "</div>" +
+          '<div class="preco">' + preco + "</div>";
+        lista.appendChild(item);
+      });
+    }
+
+    document.getElementById("recarregar").addEventListener("click", carregarProdutos);
+    carregarProdutos();
+  </script>
+</body>
+</html>
