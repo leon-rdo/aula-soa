@@ -1,0 +1,7 @@
+[
+  {"model": "catalogo.Produto", "pk": 1, "fields": {"nome": "Caderno universitário 200 folhas", "descricao": "10 matérias, capa dura.", "preco": "32.90", "disponivel": true, "criado_em": "2026-09-01T09:00:00-03:00"}},
+  {"model": "catalogo.Produto", "pk": 2, "fields": {"nome": "Caneta esferográfica azul", "descricao": "Caixa com 50 unidades.", "preco": "74.50", "disponivel": true, "criado_em": "2026-09-01T09:05:00-03:00"}},
+  {"model": "catalogo.Produto", "pk": 3, "fields": {"nome": "Mochila para notebook 15\"", "descricao": "Compartimento acolchoado, resistente à água.", "preco": "189.00", "disponivel": true, "criado_em": "2026-09-01T09:10:00-03:00"}},
+  {"model": "catalogo.Produto", "pk": 4, "fields": {"nome": "Calculadora científica", "descricao": "240 funções.", "preco": "119.90", "disponivel": false, "criado_em": "2026-09-01T09:15:00-03:00"}},
+  {"model": "catalogo.Produto", "pk": 5, "fields": {"nome": "Fone de ouvido com microfone", "descricao": "Útil para aula online.", "preco": "149.90", "disponivel": true, "criado_em": "2026-09-01T09:20:00-03:00"}}
+]

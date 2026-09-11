@@ -1,0 +1,83 @@
+### API do Catálogo — porta 8001
+### Suba o serviço antes:  python manage.py runserver 8001
+### Clique em "Send Request" acima de cada bloco (extensão REST Client).
+
+@base = http://127.0.0.1:8001/api
+
+### 1) LISTAR produtos -> 200
+### Repare na resposta: NAO e uma lista, e um objeto paginado
+### { count, next, previous, results }. Isso faz parte do contrato.
+GET {{base}}/produtos/
+Accept: application/json
+
+### 2) DETALHAR um produto -> 200
+GET {{base}}/produtos/1/
+Accept: application/json
+
+### 3) DETALHAR um produto que nao existe -> 404
+GET {{base}}/produtos/9999/
+Accept: application/json
+
+### 4) CRIAR um produto -> 201 Created
+### Repare no cabecalho Location e no status: 201, nao 200.
+POST {{base}}/produtos/
+Content-Type: application/json
+
+{
+  "nome": "Estojo escolar",
+  "descricao": "Dois compartimentos.",
+  "preco": "24.90",
+  "disponivel": true
+}
+
+### 5) CRIAR com preco negativo -> 400 Bad Request
+### A validacao do serializer barra. O erro e do cliente, nao do servidor.
+POST {{base}}/produtos/
+Content-Type: application/json
+
+{
+  "nome": "Produto impossivel",
+  "preco": "-10.00"
+}
+
+### 6) CRIAR sem o campo obrigatorio "nome" -> 400
+POST {{base}}/produtos/
+Content-Type: application/json
+
+{
+  "preco": "10.00"
+}
+
+### 7) SUBSTITUIR o produto inteiro (PUT) -> 200
+### PUT exige o recurso COMPLETO. Campo omitido = campo apagado.
+PUT {{base}}/produtos/1/
+Content-Type: application/json
+
+{
+  "nome": "Caderno universitario 200 folhas",
+  "descricao": "10 materias, capa dura. Edicao revisada.",
+  "preco": "35.90",
+  "disponivel": true
+}
+
+### 8) ALTERAR so um campo (PATCH) -> 200
+### PATCH e parcial. Compare com o PUT acima.
+PATCH {{base}}/produtos/1/
+Content-Type: application/json
+
+{
+  "preco": "37.90"
+}
+
+### 9) IDEMPOTENCIA ao vivo:
+### rode o bloco 8 tres vezes. O resultado e o mesmo -> PATCH e idempotente.
+### Agora rode o bloco 4 tres vezes. Voce cria TRES produtos -> POST nao e.
+### Guarde essa diferenca: ela e a razao de "so repetir o que e idempotente"
+### quando falarmos de retry na aula 2.
+
+### 10) REMOVER -> 204 No Content
+### 204 significa "deu certo e nao tenho nada para te devolver".
+DELETE {{base}}/produtos/6/
+
+### 11) Metodo que o recurso nao aceita -> 405 Method Not Allowed
+DELETE {{base}}/produtos/
