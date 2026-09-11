@@ -1,8 +1,7 @@
 """
 Consumindo um serviço de terceiros: BrasilAPI (busca de CEP).
 
->>> ESTE ARQUIVO É O PONTO DE PARTIDA. Vamos completá-lo juntos na aula. <<<
-
+Este é o primeiro contato da aula com "consumir um serviço".
 O ponto NÃO é buscar CEP. O ponto é perceber que, do lado de cá,
 um serviço é apenas: uma URL, um contrato de resposta e um monte
 de coisa que pode dar errado.
@@ -23,24 +22,42 @@ CEPS_DEMO = [
 
 
 def buscar_cep(cep):
-    """Busca um CEP e devolve o dicionário do endereço."""
-    # TODO 1: fazer o GET para f"{BASE_URL}/{cep}"
-    # TODO 2: passar timeout=5  (por que isso não é opcional?)
-    # TODO 3: chamar raise_for_status() (o que acontece sem ele num 404?)
-    # TODO 4: devolver o .json()
-    raise NotImplementedError("completar na aula")
+    """Busca um CEP e devolve o dicionário do endereço.
+
+    Levanta requests.HTTPError para 4xx/5xx e requests.Timeout se o
+    serviço demorar demais.
+    """
+    # timeout NUNCA é opcional ao chamar um serviço externo.
+    # Sem ele, o seu programa fica refém do servidor do outro.
+    resposta = requests.get(f"{BASE_URL}/{cep}", timeout=5)
+
+    # Transforma 4xx/5xx em exceção. Sem isto, um 404 passaria
+    # silenciosamente e você trataria uma mensagem de erro como se
+    # fosse um endereço.
+    resposta.raise_for_status()
+
+    return resposta.json()
 
 
 def main():
     for cep, esperado in CEPS_DEMO:
         print(f"\n--- CEP {cep}  ({esperado}) ---")
-        # TODO 5: envolver a chamada em try/except e tratar, separadamente:
-        #           requests.HTTPError   -> o servidor disse "não"
-        #           requests.Timeout     -> o servidor não respondeu
-        #           requests.RequestException -> a rede falhou
-        endereco = buscar_cep(cep)
-        print(f"  {endereco['street']}, {endereco['neighborhood']}")
-        print(f"  {endereco['city']}/{endereco['state']}")
+        try:
+            endereco = buscar_cep(cep)
+        except requests.HTTPError as erro:
+            # O servidor respondeu, mas respondeu "não".
+            print(f"  erro HTTP {erro.response.status_code}")
+            print(f"  corpo: {erro.response.text[:120]}")
+        except requests.Timeout:
+            # O servidor não respondeu a tempo. É diferente de erro:
+            # aqui você nem sabe se o pedido chegou.
+            print("  o serviço não respondeu dentro de 5 segundos")
+        except requests.RequestException as erro:
+            # Rede caiu, DNS falhou, sem internet.
+            print(f"  falha de rede: {erro}")
+        else:
+            print(f"  {endereco['street']}, {endereco['neighborhood']}")
+            print(f"  {endereco['city']}/{endereco['state']}")
 
 
 if __name__ == "__main__":
