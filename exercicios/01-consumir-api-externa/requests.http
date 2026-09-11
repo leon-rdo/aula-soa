@@ -1,0 +1,22 @@
+### As mesmas chamadas do consome_cep.py, sem escrever Python.
+### Abra este arquivo no VS Code e clique em "Send Request" acima de cada bloco.
+### (extensão REST Client)
+
+### 1) CEP que existe -> 200 OK
+GET https://brasilapi.com.br/api/cep/v2/66017000
+Accept: application/json
+
+### 2) CEP inexistente -> 404 Not Found
+### Repare: o servidor respondeu. Ele só disse que o recurso nao existe.
+GET https://brasilapi.com.br/api/cep/v2/12345678
+Accept: application/json
+
+### 3) CEP mal formado -> 400 Bad Request
+### Aqui o erro e SEU: o pedido nem faz sentido. Por isso 4xx e nao 5xx.
+GET https://brasilapi.com.br/api/cep/v2/1234
+Accept: application/json
+
+### 4) Pegadinha: 99999999 parece invalido, mas e um CEP REAL em Sarandi/PR.
+### Nao confie em "parece": confie no contrato e no status code.
+GET https://brasilapi.com.br/api/cep/v2/99999999
+Accept: application/json

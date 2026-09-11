@@ -1,0 +1,6 @@
+# Aula 2 - instalar SÓ no dia 19/09.
+# Instalar na hora faz parte da narrativa da aula.
+-r requirements.txt
+drf-spectacular>=0.27
+django-cors-headers>=4.4
+python-dotenv>=1.0
